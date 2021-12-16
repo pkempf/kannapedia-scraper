@@ -206,12 +206,13 @@ files_a_tags = soup.find_all(class_="DownloadLink")
 links = []
 for f in files_a_tags:
     links.append(f["href"])
+for link in links:
+    if link[0:4] != "http":
+        link = "https://www.kannapedia.net" + link
 
 if download_files:
     print("Downloading files...")
     for link in links:
-        if link[0:4] != "http":
-            link = "https://www.kannapedia.net" + link
         print("Downloading: ", link)
         download(url=link, dest_folder=folder_name)
 else:
