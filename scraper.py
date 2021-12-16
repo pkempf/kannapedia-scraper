@@ -154,26 +154,43 @@ metadata.append(reported_sex)
 report_type = general_info_dds[2].text.strip()
 metadata.append(report_type)
 
-rarity = soup.find(class_="DataPlot Rarity").find("a").text.strip()
+rarity = ""
+rarity_plot = soup.find(class_="DataPlot Rarity")
+if rarity_plot and rarity_plot.find("a"):
+    rarity = rarity_plot.find("a").text.strip()
 metadata.append(rarity)
 
-plant_type = soup.find(class_="StrainGeneticInfo--basic").find("a").text.strip()
+plant_type = ""
+plant_type_container = soup.find(class_="StrainGeneticInfo--basic")
+if plant_type_container and plant_type_container.find("a"):
+    plant_type = plant_type_container.find("a").text.strip()
 metadata.append(plant_type)
 
-reported_heterozygosity = (
-    soup.find(class_="DataPlot Heterozygosity").find("strong").text.strip()
-)
+reported_heterozygosity = ""
+reported_heterozygosity_container = soup.find(class_="DataPlot Heterozygosity")
+if reported_heterozygosity_container and reported_heterozygosity_container.find(
+    "strong"
+):
+    reported_heterozygosity = reported_heterozygosity_container.find(
+        "strong"
+    ).text.strip()
 metadata.append(reported_heterozygosity)
 
-y_ratio_distribution = soup.find(class_="DataPlot YRatio").find("strong").text.strip()
-metadata.append(y_ratio_distribution)
+y_dist = ""
+y_dist_container = soup.find(class_="DataPlot YRatio")
+if y_dist_container and y_dist_container.find("strong"):
+    y_dist = y_dist_container.find("strong").text.strip()
+metadata.append(y_dist)
 
 metadata_rows = [metadata]
 
 # making folder
 
 parent_directory = os.getcwd()
-folder_name = strain_name + "-" + specific_page
+
+folder_name = (
+    "_".join(strain_name.split()) + "-" + specific_page
+)  # replacing spaces with _
 path = os.path.join(parent_directory, folder_name)
 
 print("Creating directory...")
@@ -193,6 +210,9 @@ for f in files_a_tags:
 if download_files:
     print("Downloading files...")
     for link in links:
+        if link[0:4] != "http":
+            link = "https://www.kannapedia.net" + link
+        print("Downloading: ", link)
         download(url=link, dest_folder=folder_name)
 else:
     print("Saving download links to metafile...")
@@ -203,7 +223,7 @@ else:
 chemical_content_rows = [[]]
 
 cannabinoid_info = soup.find(class_="StrainChemicalInfo--cannabinoids")
-if "No information provided" in cannabinoid_info.text:
+if not cannabinoid_info or "No information provided" in cannabinoid_info.text:
     for x in range(0, 6):
         chemical_content_rows[0].append("n/a")
 else:
@@ -212,7 +232,7 @@ else:
         chemical_content_rows[0].append(dd.text.strip())
 
 terpenoid_info = soup.find(class_="StrainChemicalInfo--terpenoids")
-if "No information provided" in terpenoid_info.text:
+if not terpenoid_info or "No information provided" in terpenoid_info.text:
     for x in range(0, 21):
         chemical_content_rows[0].append("n/a")
 else:
