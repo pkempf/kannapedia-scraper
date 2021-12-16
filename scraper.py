@@ -206,9 +206,9 @@ files_a_tags = soup.find_all(class_="DownloadLink")
 links = []
 for f in files_a_tags:
     links.append(f["href"])
-for link in links:
-    if link[0:4] != "http":
-        link = "https://www.kannapedia.net" + link
+for x in range(len(links)):
+    if links[x][0:4] != "http":
+        links[x] = "https://www.kannapedia.net" + links[x]
 
 if download_files:
     print("Downloading files...")
@@ -271,9 +271,11 @@ for item in variants:
 
 # writing the CSV files: metadata, chemicals, variants
 
+underscored_strain_name = "_".join(strain_name.split())
+
 print("Writing CSV files...")
 with open(
-    f"{folder_name}/{strain_name + '.metadata.csv'}", "w", newline=""
+    f"{folder_name}/{underscored_strain_name + '.metadata.csv'}", "w", newline=""
 ) as metadata_csvfile:
     # making a csv writer object
     metadata_csvwriter = csv.writer(metadata_csvfile)
@@ -285,7 +287,7 @@ with open(
     metadata_csvwriter.writerows(metadata_rows)
 
 with open(
-    f"{folder_name}/{strain_name + '.chemicals.csv'}", "w", newline=""
+    f"{folder_name}/{underscored_strain_name + '.chemicals.csv'}", "w", newline=""
 ) as chemical_csvfile:
     # making a csv writer object
     chemical_csvwriter = csv.writer(chemical_csvfile)
@@ -297,7 +299,7 @@ with open(
     chemical_csvwriter.writerows(chemical_content_rows)
 
 with open(
-    f"{folder_name}/{strain_name + '.variants.csv'}", "w", newline=""
+    f"{folder_name}/{underscored_strain_name + '.variants.csv'}", "w", newline=""
 ) as variant_csvfile:
     # making a csv writer object
     variant_csvwriter = csv.writer(variant_csvfile)
