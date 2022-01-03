@@ -4,12 +4,18 @@ from bs4 import BeautifulSoup
 ### helpers
 
 
-def download(url: str, dest_folder: str):
+def download(url: str, dest_folder: str, force_redownload: bool = False):
     if not os.path.exists(dest_folder):
         os.makedirs(dest_folder)  # create folder if it does not exist
 
     filename = url.split("/")[-1].replace(" ", "_")  # be careful with file names
     file_path = os.path.join(dest_folder, filename)
+
+    if not force_redownload and os.path.exists(file_path):
+        print(f"File {filename} already exists in folder {dest_folder}")
+        return
+    elif os.path.exists(file_path):
+        print(f"Overwriting {file_path}")
 
     r = requests.get(url, stream=True)
     if r.ok:
@@ -43,10 +49,17 @@ parser.add_argument(
     help="Downloads the scraped files rather than simply providing download links",
     action="store_true",
 )
+parser.add_argument(
+    "-f",
+    "--force_redownload",
+    help="When downloading files, forces redownload of files that already exist",
+    action="store_true",
+)
 
 args = parser.parse_args()
 specific_page = args.url
 download_files = args.download_files
+force_redownload = args.force_redownload
 
 URL = "https://www.kannapedia.net/strains/"
 
@@ -236,7 +249,7 @@ if download_files:
     print("Downloading files...")
     for link in links:
         print("Downloading: ", link)
-        download(url=link, dest_folder=folder_name)
+        download(url=link, dest_folder=folder_name, force_redownload=force_redownload)
 else:
     print("Saving download links to metafile...")
     metadata_rows[0].append(links)
