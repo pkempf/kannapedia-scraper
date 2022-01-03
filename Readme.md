@@ -2,7 +2,7 @@
 
 ### How to use
 
-This is currently a very WIP scraper for individual Kannapedia listings. To use it, after installing with `pip install -r requirements.txt`, then call `python scraper.py` using the flag `-u`, supplying a url suffix (e.g. srr14419582), and optionally with the flag -d, to download the files.
+This is currently a very WIP scraper for individual Kannapedia listings. To use it, after installing with `pip install -r requirements.txt`, then call `python scraper.py` using the flag `-u`, supplying a url suffix (e.g. srr14419582), and optionally with the flag `-d`, to download the files. If rerunning the script on a url suffix, files will by default not be redownloaded; to force redownload, use the `-f` flag.
 
 For example: `python scraper.py -u srr14419582`
 
