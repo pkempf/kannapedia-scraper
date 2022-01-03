@@ -59,6 +59,7 @@ metadata_fields = [
     "NAME",
     "REF NUMBER",
     "GROWER",
+    "SAMPLE NAME",
     "ACCESSION DATE",
     "REPORTED SEX",
     "REPORT TYPE",
@@ -132,6 +133,15 @@ metadata = []
 
 strain_name_h1 = soup.find_all(class_="StrainInfo--title")[0]
 strain_name = strain_name_h1.text.strip()
+strain_name = (
+    strain_name.replace("/", "")
+    .replace("\\", "")
+    .replace("(", "")
+    .replace(")", "")
+    .replace(".", "")
+    .replace("#", "")
+    .replace("'", "")
+)
 metadata.append(strain_name)
 
 ref_number_p = soup.find(class_="StrainInfo--reportId")
@@ -142,17 +152,29 @@ registrant_p = soup.find(class_="StrainInfo--registrant")
 grower = registrant_p.find("a").text.strip()
 metadata.append(grower)
 
-general_info = soup.find(class_="StrainGeneralInfo--basic")
-general_info_dds = general_info.find_all("dd")
+sample_name_dt = soup.find("dt", string="Sample Name")
+if sample_name_dt and sample_name_dt.find_next_sibling():
+    metadata.append(sample_name_dt.find_next_sibling().text.strip())
+else:
+    metadata.append("")
 
-accession_date = general_info_dds[0].text.strip()
-metadata.append(accession_date)
+accession_dt = soup.find("dt", string="Accession Date")
+if accession_dt and accession_dt.find_next_sibling():
+    metadata.append(accession_dt.find_next_sibling().text.strip())
+else:
+    metadata.append("")
 
-reported_sex = general_info_dds[1].text.strip()
-metadata.append(reported_sex)
+reported_sex_dt = soup.find("dt", string="Reported Plant Sex")
+if reported_sex_dt and reported_sex_dt.find_next_sibling():
+    metadata.append(reported_sex_dt.find_next_sibling().text.strip())
+else:
+    metadata.append("")
 
-report_type = general_info_dds[2].text.strip()
-metadata.append(report_type)
+report_type_dt = soup.find("dt", string="Report Type")
+if report_type_dt and report_type_dt.find_next_sibling():
+    metadata.append(report_type_dt.find_next_sibling().text.strip())
+else:
+    metadata.append("")
 
 rarity = ""
 rarity_plot = soup.find(class_="DataPlot Rarity")
